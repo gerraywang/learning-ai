@@ -18,7 +18,6 @@
 | GitHub Spec Kit（github.com/github/spec-kit、1.4.3 を 2026-11-22 に確認） | `/speckit-constitution` → `specify` → `plan` → `tasks` → `implement` → `converge`（収束判定）。Claude Code では `.claude/skills/` にスキルとして入る |
 | Kiro（kiro.dev）の Specs | requirements.md（EARS）・design.md・tasks.md の 3 点セット |
 | OpenSpec（github.com/Fission-AI/OpenSpec、v2.1.1 を 2026-11-22 に確認） | 正本の `specs/` と変更の `changes/` を分け、差分（ADDED / MODIFIED / REMOVED）を archive で正本に反映する。既存コード向け |
-| Anthropic のエンジニアリングブログ（Claude Code のベストプラクティス、コンテキストエンジニアリング） | 計画を先に書かせる・CLAUDE.md の書き方 |
 
 ## 課題
 - [x] lab1: Spec Kit で小さな TODO アプリを最後まで作る（[labs/sdd-speckit-todo](../labs/sdd-speckit-todo/README.md)、2026-11-22 修了）

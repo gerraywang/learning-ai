@@ -17,6 +17,7 @@
 |---|---|
 | GitHub Spec Kit（github.com/github/spec-kit、1.4.3 を 2026-11-22 に確認） | `/speckit-constitution` → `specify` → `plan` → `tasks` → `implement` → `converge`（収束判定）。Claude Code では `.claude/skills/` にスキルとして入る |
 | Kiro（kiro.dev）の Specs | requirements.md（EARS）・design.md・tasks.md の 3 点セット |
+| OpenSpec（github.com/Fission-AI/OpenSpec、v2.1.1 を 2026-11-22 に確認） | 正本の `specs/` と変更の `changes/` を分け、差分（ADDED / MODIFIED / REMOVED）を archive で正本に反映する。既存コード向け |
 | Anthropic のエンジニアリングブログ（Claude Code のベストプラクティス、コンテキストエンジニアリング） | 計画を先に書かせる・CLAUDE.md の書き方 |
 
 ## 課題
@@ -24,6 +25,7 @@
 - [x] lab2: 同じアプリを Kiro 風の 3 点セット（requirements / design / tasks）を手で書いて Claude Code に作らせ、違いを比べる（[labs/sdd-kiro-todo](../labs/sdd-kiro-todo/README.md)、2026-11-22 修了）
 - [x] lab3: 仕様を 1 か所変えて再生成し、どこまで追従するかを見る（[labs/sdd-spec-change](../labs/sdd-spec-change/README.md)、2026-11-22 修了）
 - [x] まとめ: 実務の業務システム改修に持ち込むなら何を仕様にするかを一般論で書く（下の「まとめ」、2026-11-22）
+- [ ] 追加課題 lab4: OpenSpec で「既存を整理し、改修分を足す」を試す（[labs/sdd-openspec-todo](../labs/sdd-openspec-todo/README.md)、準備済み 2026-11-22）
 
 ## まとめ: 業務システムの改修に SDD を持ち込むなら（2026-11-22、一般論）
 自分の考え（太字）に、lab1〜3 の体験からの補足を足した。立場は **PM 側**（コードは書かず、広い範囲で仕様を理解し、レビューと確認をする）。

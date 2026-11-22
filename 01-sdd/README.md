@@ -20,7 +20,7 @@
 | Anthropic のエンジニアリングブログ（Claude Code のベストプラクティス、コンテキストエンジニアリング） | 計画を先に書かせる・CLAUDE.md の書き方 |
 
 ## 課題
-- [ ] lab1: Spec Kit で小さな TODO アプリを最後まで作る（[labs/sdd-speckit-todo](../labs/sdd-speckit-todo/README.md)、準備済み 2026-11-22）
+- [x] lab1: Spec Kit で小さな TODO アプリを最後まで作る（[labs/sdd-speckit-todo](../labs/sdd-speckit-todo/README.md)、2026-11-22 修了）
 - [ ] lab2: 同じアプリを Kiro 風の 3 点セット（requirements / design / tasks）を手で書いて Claude Code に作らせ、違いを比べる
 - [ ] lab3: 仕様を 1 か所変えて再生成し、どこまで追従するかを見る
 - [ ] まとめ: 実務の業務システム改修に持ち込むなら何を仕様にするかを一般論で書く

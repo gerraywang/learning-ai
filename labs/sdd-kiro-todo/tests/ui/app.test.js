@@ -345,6 +345,23 @@ describe('7.2 の補助: 描き直してもキーボードの位置を失わな�
     expect(document.activeElement).toBe(ui.byLabel('内容'));
   });
 
+  it('編集を始めると入力欄へ、確定できなければ入力欄に残り、確定・取り消しのあとはその行の「編集」ボタンへ移る', () => {
+    const ui = renderApp({ today: TODAY });
+    ui.add('1', TODAY);
+    ui.add('2', TODAY);
+    ui.startEdit(1);
+    expect(document.activeElement).toBe(ui.rowParts(ui.row(1)).editInput);
+    ui.typeEdit(' ');
+    ui.confirmEdit();
+    expect(document.activeElement).toBe(ui.rowParts(ui.row(1)).editInput);
+    ui.typeEdit('二');
+    ui.confirmEdit();
+    expect(document.activeElement).toBe(ui.rowParts(ui.row(1)).editButton);
+    ui.startEdit(0);
+    ui.cancelEditByEscape();
+    expect(document.activeElement).toBe(ui.rowParts(ui.row(0)).editButton);
+  });
+
   it('完了を切り替えても、その行のチェックにフォーカスが残る', () => {
     const ui = renderApp({ today: TODAY });
     ui.add('1', TODAY);
@@ -361,10 +378,14 @@ describe('要件 6: データを保存する', () => {
     corrupt: '保存されたデータを読み込めませんでした',
   };
 
-  it('6.1: 追加・完了・未完了に戻す・削除のたびに、すぐ保存する', () => {
+  it('6.1: 追加・内容の編集・完了・未完了に戻す・削除のたびに、すぐ保存する', () => {
     const ui = renderApp({ today: TODAY });
     const ids = () => ui.saved().todos.map((t) => [t.title, t.done]);
-    ui.add('買い物', TODAY);
+    ui.add('買いもの', TODAY);
+    expect(ids()).toEqual([['買いもの', false]]);
+    ui.startEdit(0);
+    ui.typeEdit('買い物');
+    ui.confirmEdit();
     expect(ids()).toEqual([['買い物', false]]);
     ui.toggle(0);
     expect(ids()).toEqual([['買い物', true]]);
@@ -453,6 +474,22 @@ describe('要件 6: データを保存する', () => {
     expect(ui.saved().todos.map((t) => [t.title, t.done])).toEqual([['買い物', true]]);
   });
 
+  it('6.4: 編集の確定で保存に失敗したら知らせ、画面の内容は変えたまま操作を続けられる', () => {
+    const storage = storageWith([item('a', '買いもの', TODAY)]);
+    const ui = renderApp({ today: TODAY, storage });
+    const raw = storage.getItem(STORAGE_KEY);
+    storage.setItem = () => {
+      throw new Error('QuotaExceededError');
+    };
+    ui.startEdit(0);
+    ui.typeEdit('買い物');
+    ui.confirmEdit();
+    expect(ui.titles()).toEqual(['買い物']);
+    expect(ui.editingRow()).toBeUndefined();
+    expect(ui.notice()).toBe(NOTICE.saveFailed);
+    expect(storage.getItem(STORAGE_KEY)).toBe(raw);
+  });
+
   it('6.4: 起動時から容量不足の Storage でも、保存に失敗した時点で知らせる', () => {
     const ui = renderApp({ today: TODAY, storage: createQuotaStorage() });
     expect(ui.notice()).toBe('');
@@ -483,5 +520,261 @@ describe('要件 6: データを保存する', () => {
     const ui = renderApp({ today: TODAY, storage });
     expect(ui.rows()).toHaveLength(0);
     expect(ui.notice()).toBe(NOTICE.corrupt);
+  });
+});
+
+describe('要件 8: TODO の内容を編集する', () => {
+  // 1 行目: 未完了・期限切れ、2 行目: 完了、3 行目: 未完了
+  const setup = () =>
+    renderApp({
+      today: TODAY,
+      storage: storageWith([
+        item('a', '買い物', YESTERDAY),
+        item('b', '掃除', TODAY, true),
+        item('c', '洗濯', TOMORROW),
+      ]),
+    });
+
+  it('8.1: 編集を始めると、その TODO の今の内容を入れた入力欄で書き換えられる', () => {
+    const ui = setup();
+    ui.startEdit(1);
+    const parts = ui.rowParts(ui.row(1));
+    expect(parts.editInput.value).toBe('掃除');
+    expect(parts.editInput.disabled).toBe(false);
+    expect(parts.editButton).toBeUndefined();
+    expect(parts.saveButton).toBeDefined();
+    expect(parts.cancelButton).toBeDefined();
+    expect(ui.editingRow()).toBe(ui.row(1));
+    expect(ui.rowParts(ui.row(0)).editInput).toBeNull();
+  });
+
+  it('8.1: 「編集」ボタンの読み上げ名は「<内容> を編集」', () => {
+    const ui = setup();
+    expect(ui.rowParts(ui.row(0)).editButton.getAttribute('aria-label')).toBe('買い物 を編集');
+  });
+
+  it('8.2: 確定すると、前後の空白を取り除いた新しい内容に変わる（「保存」と Enter）', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    ui.typeEdit('  牛乳を買う  ');
+    ui.confirmEdit();
+    expect(ui.titles()).toEqual(['牛乳を買う', '掃除', '洗濯']);
+    expect(ui.editingRow()).toBeUndefined();
+    expect(ui.saved().todos[0].title).toBe('牛乳を買う');
+
+    ui.startEdit(2);
+    ui.typeEdit('洗濯物を干す');
+    ui.confirmEditByEnter();
+    expect(ui.titles()).toEqual(['牛乳を買う', '掃除', '洗濯物を干す']);
+    expect(ui.saved().todos[2].title).toBe('洗濯物を干す');
+  });
+
+  it('8.2: 編集した内容に HTML の文字が含まれていても、文字のとおりに表示する（1.12）', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    ui.typeEdit('<b>太字</b>');
+    ui.confirmEdit();
+    expect(ui.titles()[0]).toBe('<b>太字</b>');
+    expect(ui.row(0).querySelector('b')).toBeNull();
+    expect(ui.rowParts(ui.row(0)).editButton.getAttribute('aria-label')).toBe('<b>太字</b> を編集');
+  });
+
+  it('8.3: 取り消すと、内容は編集を始める前のまま変わらない（「取り消し」と Esc）', () => {
+    const ui = setup();
+    const raw = ui.storage.getItem(STORAGE_KEY);
+    ui.startEdit(0);
+    ui.typeEdit('別の内容');
+    ui.cancelEdit();
+    expect(ui.titles()).toEqual(['買い物', '掃除', '洗濯']);
+    expect(ui.editingRow()).toBeUndefined();
+
+    ui.startEdit(0);
+    ui.typeEdit('別の内容');
+    ui.cancelEditByEscape();
+    expect(ui.titles()).toEqual(['買い物', '掃除', '洗濯']);
+    expect(ui.editingRow()).toBeUndefined();
+    expect(ui.storage.getItem(STORAGE_KEY)).toBe(raw);
+  });
+
+  it('8.4: 空・空白だけの内容では確定せず、内容が必要と示す', () => {
+    const ui = setup();
+    const raw = ui.storage.getItem(STORAGE_KEY);
+    ui.startEdit(0);
+    ui.typeEdit('');
+    ui.confirmEdit();
+    expect(ui.rowParts(ui.row(0)).editErrors).toEqual([MSG.titleRequired]);
+    ui.typeEdit('  　 ');
+    ui.confirmEditByEnter();
+    expect(ui.rowParts(ui.row(0)).editErrors).toEqual([MSG.titleRequired]);
+    expect(ui.storage.getItem(STORAGE_KEY)).toBe(raw);
+    ui.cancelEdit();
+    expect(ui.titles()[0]).toBe('買い物');
+  });
+
+  it('8.5: 200 文字を超える内容では確定せず、200 文字以内と示す（前後の空白は数えない）', () => {
+    const ui = setup();
+    const raw = ui.storage.getItem(STORAGE_KEY);
+    ui.startEdit(0);
+    ui.typeEdit('あ'.repeat(201));
+    ui.confirmEdit();
+    expect(ui.rowParts(ui.row(0)).editErrors).toEqual([MSG.titleTooLong]);
+    expect(ui.storage.getItem(STORAGE_KEY)).toBe(raw);
+
+    ui.typeEdit(`  ${'あ'.repeat(200)}  `);
+    ui.confirmEdit();
+    expect(ui.titles()[0]).toBe('あ'.repeat(200));
+    expect(ui.saved().todos[0].title).toBe('あ'.repeat(200));
+  });
+
+  it('8.4・8.5: 編集の誤りは追加の誤り（フォームの下）とは別に出す', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    ui.typeEdit('');
+    ui.confirmEdit();
+    expect(ui.errors()).toEqual([]);
+    expect(ui.rowParts(ui.row(0)).editErrors).toEqual([MSG.titleRequired]);
+  });
+
+  it('8.6: 確定できなかったら、入力した内容を残したまま編集を続けられる', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    const long = `  ${'い'.repeat(201)}  `;
+    ui.typeEdit(long);
+    ui.confirmEdit();
+    expect(ui.editingRow()).toBe(ui.row(0));
+    expect(ui.rowParts(ui.row(0)).editInput.value).toBe(long);
+    ui.typeEdit('直した');
+    ui.confirmEdit();
+    expect(ui.titles()[0]).toBe('直した');
+  });
+
+  it('8.7: 誤りを示したあとで、確定できたら・取り消したら、その表示を消す', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    ui.typeEdit('');
+    ui.confirmEdit();
+    ui.typeEdit('直した');
+    ui.confirmEdit();
+    expect(document.querySelectorAll('ul.edit-errors > li')).toHaveLength(0);
+
+    ui.startEdit(0);
+    expect(ui.rowParts(ui.row(0)).editErrors).toEqual([]);
+    ui.typeEdit('');
+    ui.confirmEdit();
+    ui.cancelEdit();
+    expect(document.querySelectorAll('ul.edit-errors > li')).toHaveLength(0);
+    ui.startEdit(0);
+    expect(ui.rowParts(ui.row(0)).editErrors).toEqual([]);
+  });
+
+  it('8.8: 編集しても、期限・完了かどうか・並び順は変わらない', () => {
+    const ui = setup();
+    const before = ui.saved().todos;
+    ui.startEdit(1);
+    ui.typeEdit('お風呂の掃除');
+    ui.confirmEdit();
+    ui.startEdit(0);
+    ui.typeEdit('牛乳を買う');
+    ui.confirmEdit();
+    expect(ui.saved().todos).toEqual([
+      { ...before[0], title: '牛乳を買う' },
+      { ...before[1], title: 'お風呂の掃除' },
+      before[2],
+    ]);
+    expect(ui.titles()).toEqual(['牛乳を買う', 'お風呂の掃除', '洗濯']);
+    expect(ui.rowParts(ui.row(1)).checkbox.checked).toBe(true);
+    expect(ui.row(1).classList.contains('done')).toBe(true);
+    expect(ui.row(0).classList.contains('overdue')).toBe(true);
+    expect(ui.rowParts(ui.row(0)).due.textContent).toBe(`期限: ${YESTERDAY}`);
+  });
+
+  it('8.9: 同時に編集できるのは 1 件だけ', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    ui.startEdit(2);
+    expect(document.querySelectorAll('form.edit-form')).toHaveLength(1);
+    expect(ui.editingRow()).toBe(ui.row(2));
+  });
+
+  describe('8.10: 編集中にほかの操作をすると、編集を取り消してからその操作をする', () => {
+    const startTyping = (ui) => {
+      ui.startEdit(0);
+      ui.typeEdit('打ちかけ');
+    };
+
+    it('8.10: 別の TODO の編集を始める', () => {
+      const ui = setup();
+      startTyping(ui);
+      ui.startEdit(2);
+      expect(ui.rowParts(ui.row(0)).title.textContent).toBe('買い物');
+      expect(ui.rowParts(ui.row(2)).editInput.value).toBe('洗濯');
+      expect(ui.saved().todos[0].title).toBe('買い物');
+    });
+
+    it('8.10: 追加する（追加で誤りが出ても、編集は取り消したまま）', () => {
+      const ui = setup();
+      startTyping(ui);
+      ui.add('', '');
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()).toEqual(['買い物', '掃除', '洗濯']);
+      expect(ui.errors()).toEqual([MSG.titleRequired, MSG.dueRequired]);
+
+      startTyping(ui);
+      ui.add('料理', TODAY);
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()).toEqual(['買い物', '掃除', '洗濯', '料理']);
+      expect(ui.saved().todos.map((t) => t.title)).toEqual(['買い物', '掃除', '洗濯', '料理']);
+    });
+
+    it('8.10: 完了を切り替える（編集中の行のチェックでも）', () => {
+      const ui = setup();
+      startTyping(ui);
+      ui.toggle(0);
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()[0]).toBe('買い物');
+      expect(ui.rowParts(ui.row(0)).checkbox.checked).toBe(true);
+      expect(ui.saved().todos[0]).toMatchObject({ title: '買い物', done: true });
+
+      startTyping(ui);
+      ui.toggle(2);
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()[0]).toBe('買い物');
+      expect(ui.saved().todos[2].done).toBe(true);
+    });
+
+    it('8.10: 削除する（別の行でも、編集中の行でも）', () => {
+      const ui = setup();
+      startTyping(ui);
+      ui.remove(2);
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()).toEqual(['買い物', '掃除']);
+
+      startTyping(ui);
+      ui.remove(0);
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()).toEqual(['掃除']);
+      expect(ui.saved().todos.map((t) => t.title)).toEqual(['掃除']);
+    });
+
+    it('8.10: 表示を切り替える', () => {
+      const ui = setup();
+      startTyping(ui);
+      ui.chooseFilter('未完了');
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()).toEqual(['買い物', '洗濯']);
+      ui.chooseFilter('すべて');
+      expect(ui.editingRow()).toBeUndefined();
+      expect(ui.titles()[0]).toBe('買い物');
+    });
+  });
+
+  it('8.11: 編集中に再読み込みすると、編集していない状態で開き、確定していない編集は保存しない', () => {
+    const ui = setup();
+    ui.startEdit(0);
+    ui.typeEdit('打ちかけ');
+    ui.reload();
+    expect(ui.editingRow()).toBeUndefined();
+    expect(ui.titles()).toEqual(['買い物', '掃除', '洗濯']);
+    expect(ui.saved().todos[0].title).toBe('買い物');
   });
 });

@@ -1,5 +1,15 @@
 import { describe, it, expect } from 'vitest';
-import { validateInput, addTodo, toDateString, isOverdue, toggleTodo, removeTodo, filterTodos } from '../../src/todo.js';
+import {
+  validateTitle,
+  validateInput,
+  addTodo,
+  editTodo,
+  toDateString,
+  isOverdue,
+  toggleTodo,
+  removeTodo,
+  filterTodos,
+} from '../../src/todo.js';
 
 const TODAY = '2026-11-22';
 
@@ -118,5 +128,41 @@ describe('filterTodos', () => {
     expect(filterTodos(sample(), 'all').map((t) => t.id)).toEqual(['a', 'b', 'c']);
     expect(filterTodos(sample(), 'active').map((t) => t.id)).toEqual(['a', 'c']);
     expect(filterTodos(sample(), 'completed').map((t) => t.id)).toEqual(['b']);
+  });
+});
+
+describe('validateTitle（追加と編集で共通の内容の決まり）', () => {
+  it('8.2: 正しい内容なら ok: true と、前後の空白を除いた title', () => {
+    expect(validateTitle('  買い物  ')).toEqual({ ok: true, title: '買い物' });
+  });
+
+  it('8.4: 空・空白だけは不可', () => {
+    expect(validateTitle('')).toEqual({ ok: false, errors: ['titleRequired'] });
+    expect(validateTitle(' \t　')).toEqual({ ok: false, errors: ['titleRequired'] });
+    expect(validateTitle(undefined)).toEqual({ ok: false, errors: ['titleRequired'] });
+  });
+
+  it('8.5: 200 文字まで可、201 文字は不可（前後の空白は数えない）', () => {
+    expect(validateTitle('あ'.repeat(200))).toEqual({ ok: true, title: 'あ'.repeat(200) });
+    expect(validateTitle(`  ${'あ'.repeat(200)}  `)).toEqual({ ok: true, title: 'あ'.repeat(200) });
+    expect(validateTitle('あ'.repeat(201))).toEqual({ ok: false, errors: ['titleTooLong'] });
+  });
+});
+
+describe('editTodo', () => {
+  it('8.2・8.8: 指定した 1 件の title だけを変え、id・due・done・順番と元の配列は変えない', () => {
+    const before = sample();
+    const after = editTodo(before, 'b', '新しい内容');
+    expect(after).toEqual([before[0], { ...before[1], title: '新しい内容' }, before[2]]);
+    expect(before[1].title).not.toBe('新しい内容');
+    expect(after).not.toBe(before);
+  });
+
+  it('内容と期限が同じものが他にあっても、指定した 1 件だけを変える', () => {
+    const todos = [
+      { id: 'x', title: '同じ', done: false, due: TODAY },
+      { id: 'y', title: '同じ', done: false, due: TODAY },
+    ];
+    expect(editTodo(todos, 'y', '変えた').map((t) => t.title)).toEqual(['同じ', '変えた']);
   });
 });

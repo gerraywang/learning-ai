@@ -182,3 +182,46 @@ button {
 #empty-message {
   color: var(--muted);
 }
+
+/* 内容の編集【要件 8】 */
+#todo-list .check {
+  display: flex;
+  align-items: center;
+}
+
+.edit-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 16rem;
+  min-width: 0;
+}
+
+.edit-form input[type='text'] {
+  flex: 1 1 10rem;
+  min-width: 0;
+}
+
+/* 編集の誤り: 追加の誤りと同じ見た目 */
+.edit-errors {
+  flex-basis: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.edit-errors:empty {
+  display: none;
+}
+
+.edit-errors li {
+  padding: 0.4rem 0.6rem;
+  border-left: 4px solid var(--danger);
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+
+.edit-errors li::before {
+  content: '⚠ ';
+}

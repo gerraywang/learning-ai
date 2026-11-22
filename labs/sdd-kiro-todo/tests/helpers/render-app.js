@@ -35,7 +35,16 @@ export function renderApp({ storage = createMemoryStorage(), today = '2026-11-22
     title: r.querySelector('.title'),
     due: r.querySelector('.due'),
     deleteButton: [...r.querySelectorAll('button')].find((b) => b.textContent.trim() === '削除'),
+    editButton: [...r.querySelectorAll('button')].find((b) => b.textContent.trim() === '編集'),
+    // 編集中の行だけにあるもの【要件 8】
+    editForm: r.querySelector('form.edit-form'),
+    editInput: r.querySelector('input[aria-label="内容を編集"]'),
+    saveButton: [...r.querySelectorAll('button')].find((b) => b.textContent.trim() === '保存'),
+    cancelButton: [...r.querySelectorAll('button')].find((b) => b.textContent.trim() === '取り消し'),
+    editErrors: [...r.querySelectorAll('ul.edit-errors[role="alert"] > li')].map((li) => li.textContent),
   });
+  /** 編集中の行（なければ undefined） */
+  const editingRow = () => rows().find((r) => r.querySelector('form.edit-form'));
 
   const ui = {
     storage,
@@ -45,8 +54,11 @@ export function renderApp({ storage = createMemoryStorage(), today = '2026-11-22
     rows,
     row,
     rowParts,
-    titles: () => rows().map((r) => rowParts(r).title.textContent),
-    errors: () => [...document.querySelectorAll('ul[role="alert"] > li')].map((li) => li.textContent),
+    editingRow,
+    /** 編集中の行は、編集を始める前の内容（title）が出ていないので、その行は入力欄の値ではなく null を返す */
+    titles: () => rows().map((r) => rowParts(r).title?.textContent ?? null),
+    /** 追加の誤り（フォームの下）だけ。編集の誤りは rowParts(r).editErrors */
+    errors: () => [...document.querySelectorAll('#input-errors > li')].map((li) => li.textContent),
     notice: () => document.querySelector('[role="status"]').textContent,
     emptyMessage: () => {
       const el = document.getElementById('empty-message');
@@ -71,6 +83,34 @@ export function renderApp({ storage = createMemoryStorage(), today = '2026-11-22
     },
     chooseFilter(text) {
       button(text).click();
+    },
+    /** index 行目の「編集」を押す */
+    startEdit(index) {
+      rowParts(rows()[index]).editButton.click();
+    },
+    /** 編集中の入力欄に文字を入れる */
+    typeEdit(text) {
+      const input = rowParts(editingRow()).editInput;
+      input.value = text;
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+    },
+    /** 「保存」を押す */
+    confirmEdit() {
+      rowParts(editingRow()).saveButton.click();
+    },
+    /** 入力欄で Enter（jsdom はフォームの暗黙の送信を再現しないので requestSubmit で代える。追加の submit() と同じ） */
+    confirmEditByEnter() {
+      rowParts(editingRow()).editForm.requestSubmit();
+    },
+    /** 「取り消し」を押す */
+    cancelEdit() {
+      rowParts(editingRow()).cancelButton.click();
+    },
+    /** 入力欄で Esc */
+    cancelEditByEscape() {
+      rowParts(editingRow()).editInput.dispatchEvent(
+        new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true }),
+      );
     },
     saved: () => JSON.parse(storage.getItem(STORAGE_KEY)),
     /** 同じ Storage で起動し直す（再読み込み・開き直し） */

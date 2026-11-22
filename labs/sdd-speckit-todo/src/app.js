@@ -136,12 +136,10 @@ export function createApp({ document, storage, today }) {
       render();
       return;
     }
-    state.todos = addTodo(state.todos, { title: result.title, due: els.dueInput.value });
-    state.message = baseMessage();
-    persist();
+    const due = els.dueInput.value;
     els.titleInput.value = '';
     els.dueInput.value = '';
-    render();
+    updateTodos(addTodo(state.todos, { title: result.title, due }));
   });
 
   /** 一覧の中の操作は 1 か所で受け取り、どの行かは data-id で決める */
@@ -176,7 +174,4 @@ export function createApp({ document, storage, today }) {
   }
 
   render();
-
-  // テストやデバッグで状態を確かめるため
-  return { getState: () => state };
 }

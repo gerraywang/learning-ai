@@ -244,3 +244,11 @@ Task: "tests/ui/app.test.js に US1-1〜US1-4 のテストを書く"
 - 実装が spec.md・contracts とずれたら、先に文書を直してからコードを直す（原則 IV）
 - spec にない機能（編集・並べ替え・検索など）は足さない（原則 III）
 - ランタイム依存を足さない。足す必要が出たら先に plan.md の Complexity Tracking に理由を書く（原則 II）
+
+---
+
+## Phase 9: Convergence
+
+- [X] T036 CRITICAL: `src/app.js` の `createApp` の戻り値 `{ getState }` を削除する（どのコードからもテストからも使われていない、spec・plan にない API）。`createApp` は何も返さないようにし、`npm test` が通ることを確かめる per Constitution III (unrequested)
+- [X] T037 `src/storage.js` の `MAX_TITLE_LENGTH` の重複定義をやめ、`src/todo.js` の `MAX_TITLE_LENGTH` を import して data-model.md `Todo.title` の上限を 1 か所にする per Constitution III / plan: Project Structure (partial)
+- [X] T038 `src/app.js` の追加フォームの処理で、状態の更新・お知らせ・保存・描画を `updateTodos` に任せ、入力欄を空に戻す処理だけを残して重複をなくす（振る舞いは contracts/ui.md「操作と結果」のまま） per Constitution III (partial)

@@ -1,9 +1,10 @@
 // 保存と読み込み（contracts/storage.md、FR-012 / FR-013 / FR-014）
 // Storage は引数で受け取る。失敗は例外ではなく戻り値で返す。
 
+import { MAX_TITLE_LENGTH } from './todo.js'; // data-model.md Todo.title の上限
+
 export const STORAGE_KEY = 'sdd-speckit-todo';
 const VERSION = 1;
-const MAX_TITLE_LENGTH = 200; // data-model.md Todo.title
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/; // data-model.md Todo.due
 
 /** data-model.md の Todo.id / Todo.title / Todo.done / Todo.due の制約を満たすか */

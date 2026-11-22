@@ -33,7 +33,7 @@ cd labs/sdd-speckit-todo && claude
 ## 動かし方
 ```bash
 npm install
-npm test        # テスト 96 件
+npm test        # テスト 144 件（001: 96、002: 48）
 npm run dev     # http://localhost:5173/
 ```
 

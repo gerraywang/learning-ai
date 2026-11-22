@@ -33,6 +33,14 @@ export function toggleTodo(todos, id) {
   return todos.map((todo) => (todo.id === id ? { ...todo, done: !todo.done } : todo));
 }
 
+/**
+ * 指定した id の文言だけを変えた配列を返す（data-model.md Todo.title、spec 002 FR-003 / FR-007）
+ * title は validateTitle を通したものを渡す。done・due・順番は変えない。
+ */
+export function editTodo(todos, id, title) {
+  return todos.map((todo) => (todo.id === id ? { ...todo, title } : todo));
+}
+
 /** 指定した id のやることを除いた配列を返す（data-model.md Todo.id、FR-007） */
 export function removeTodo(todos, id) {
   return todos.filter((todo) => todo.id !== id);

@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addTodo,
+  editTodo,
   filterTodos,
   isOverdue,
   removeTodo,
@@ -90,6 +91,42 @@ describe('removeTodo（FR-007）', () => {
 
   it('存在しない id では変わらない', () => {
     expect(removeTodo(todos, 'zzz')).toEqual(todos);
+  });
+});
+
+describe('editTodo（spec 002 FR-003, FR-007、data-model.md Todo.title）', () => {
+  const todos = [
+    { id: 'a', title: '牛乳を買う', done: false, due: '2026-12-01' },
+    { id: 'b', title: '牛乳を買う', done: true, due: null },
+    { id: 'c', title: '本を返す', done: false, due: null },
+  ];
+
+  it('指定した id の title だけが変わり、done・due・id・順番は変わらない', () => {
+    const after = editTodo(todos, 'a', '豆乳を買う');
+    expect(after).toEqual([
+      { id: 'a', title: '豆乳を買う', done: false, due: '2026-12-01' },
+      todos[1],
+      todos[2],
+    ]);
+  });
+
+  it('完了のやることも title だけが変わる', () => {
+    expect(editTodo(todos, 'b', '豆乳')[1]).toEqual({ id: 'b', title: '豆乳', done: true, due: null });
+  });
+
+  it('同じ文言が複数あっても、指定した id だけが変わり、ほかは同じオブジェクトのまま', () => {
+    const after = editTodo(todos, 'b', '豆乳');
+    expect(after[0]).toBe(todos[0]);
+    expect(after[2]).toBe(todos[2]);
+  });
+
+  it('元の配列を変えない', () => {
+    editTodo(todos, 'a', '豆乳を買う');
+    expect(todos[0].title).toBe('牛乳を買う');
+  });
+
+  it('存在しない id では変わらない', () => {
+    expect(editTodo(todos, 'zzz', 'X')).toEqual(todos);
   });
 });
 

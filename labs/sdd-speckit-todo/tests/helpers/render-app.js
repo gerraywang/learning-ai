@@ -52,9 +52,36 @@ export function renderApp({ storage = createMemoryStorage(), today = DEFAULT_TOD
     },
     /** 行の中の部品（行は番号か data-id で指定。同じ文言が複数あっても区別できる） */
     checkbox: (indexOrId) => ui.row(indexOrId).querySelector('input[type="checkbox"]'),
-    deleteButton: (indexOrId) => ui.row(indexOrId).querySelector('button'),
+    deleteButton: (indexOrId) => ui.row(indexOrId).querySelector('button.remove'),
     toggle: (indexOrId) => ui.checkbox(indexOrId).click(),
     remove: (indexOrId) => ui.deleteButton(indexOrId).click(),
+
+    // 編集（specs/002-edit-todo-text/contracts/ui.md）
+    editButton: (indexOrId) => ui.row(indexOrId).querySelector('button.edit'),
+    startEdit: (indexOrId) => ui.editButton(indexOrId).click(),
+    editingRows: () => ui.rows().filter((li) => li.classList.contains('editing')),
+    editForm: () => ui.list().querySelector('li.editing form.edit-form'),
+    /** 編集中の行の「やることの文言」入力欄（なければ null） */
+    editInput: () =>
+      ui.list().querySelector('li.editing input[aria-label="やることの文言"]') ?? null,
+    confirmEditButton: () => byText('li.editing button', '確定'),
+    cancelEditButton: () => byText('li.editing button', '取り消し'),
+    /** 入力欄に文言を入れて「確定」を押す */
+    confirmEdit: (text) => {
+      ui.editInput().value = text;
+      ui.confirmEditButton().click();
+    },
+    /** 入力欄に文言を入れて Enter で送信する（フォームの送信として起こす） */
+    submitEditWithEnter: (text) => {
+      ui.editInput().value = text;
+      ui.editForm().requestSubmit();
+    },
+    /** 編集の入力欄で keydown を起こす */
+    pressKey: (key, { isComposing = false } = {}) => {
+      ui.editInput().dispatchEvent(
+        new KeyboardEvent('keydown', { key, isComposing, bubbles: true, cancelable: true }),
+      );
+    },
     filterButton: (text) => byText('#filters button', text),
     /** Storage に保存されているやること（contracts/storage.md の形式） */
     getStoredTodos: () => JSON.parse(storage.getItem('sdd-speckit-todo')).todos,

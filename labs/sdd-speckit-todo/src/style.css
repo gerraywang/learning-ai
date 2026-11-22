@@ -151,8 +151,22 @@ button {
   color: var(--danger);
 }
 
+.edit,
 .remove {
   font-size: 0.875rem;
+}
+
+/* 編集中の行（spec 002 contracts/ui.md） */
+.edit-form {
+  display: flex;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.edit-form input {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 #empty-message {

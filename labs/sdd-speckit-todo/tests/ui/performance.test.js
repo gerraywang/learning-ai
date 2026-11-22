@@ -1,4 +1,4 @@
-// SC-002: やること 500 件で、各操作の画面反映が 0.1 秒以内
+// SC-002（001・002）: やること 500 件で、各操作の画面反映が 0.1 秒以内
 // jsdom 上の計測なので実際のブラウザとは一致しない（目安。research.md / analyze の C5）
 import { describe, expect, it } from 'vitest';
 import { createMemoryStorage } from '../helpers/memory-storage.js';
@@ -28,10 +28,15 @@ describe('500 件での操作の速さ（SC-002）', () => {
     ['完了の切り替え', (ui) => ui.toggle('id-250')],
     ['削除', (ui) => ui.remove('id-250')],
     ['絞り込み', (ui) => ui.filterButton('未完了').click()],
-  ])('%s が 0.1 秒以内', (_, action) => {
+    // spec 002 SC-002: 編集の確定・取り消し（編集の開始は計測の前に済ませる）
+    ['編集の確定', (ui) => ui.confirmEdit('直したやること'), (ui) => ui.startEdit('id-250')],
+    ['編集の取り消し', (ui) => ui.cancelEditButton().click(), (ui) => ui.startEdit('id-250')],
+  ])('%s が 0.1 秒以内', (_, action, prepare = () => {}) => {
     const ui = renderApp({ storage: seed500() });
+    prepare(ui);
     action(ui); // 1 回目は準備（JIT など）を含むので捨てる
     const ui2 = renderApp({ storage: seed500() });
+    prepare(ui2);
     const elapsed = measure(() => action(ui2));
 
     expect(elapsed).toBeLessThan(LIMIT_MS);

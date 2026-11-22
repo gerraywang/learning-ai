@@ -1,50 +1,73 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+# Spec Kit TODO Lab Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. テスト先行（NON-NEGOTIABLE）
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+- 本番コードを書く前に、その振る舞いを確かめるテストを MUST 書く。
+- テストは先に「失敗する」ことを確認してから実装する（Red → Green → Refactor）。
+- tasks.md では、各ユーザーストーリーのテストタスクを実装タスクより前に MUST 置く。
+- 受け入れ条件（spec.md の Acceptance Scenarios）1 つにつき、少なくとも 1 つの自動テストを
+  MUST 対応させる。
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**理由**: テストが仕様を実行可能な形にし、AI が書いたコードの正しさを人が確かめる手段になる。
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. 依存は最小
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+- ランタイム依存（実行時に読み込むライブラリ）は原則 0 とし、追加する場合は plan.md の
+  Complexity Tracking に「標準機能では足りない理由」を MUST 書く。
+- 開発時依存（ビルド・テスト用）は、目的ごとに 1 つまでを SHOULD とする。
+- 外部サービス・サーバー・アカウント登録を必要とする構成は MUST NOT 採用しない。
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**理由**: 依存が少ないほど、生成されたコードを読み切れ、壊れる箇所も減る。学習用の題材として
+全体を把握できる大きさを保つ。
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. シンプルさ優先
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- 仕様に書かれていない機能・設定・抽象化は MUST NOT 作らない（YAGNI）。
+- 同じ目的なら、ファイル数・行数・概念の数が少ない案を MUST 選ぶ。
+- 将来の拡張を理由にした層分け・汎用化は、現時点で 2 か所以上の使い道がない限り行わない。
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**理由**: 小さく保つことで、仕様 → 計画 → タスク → 実装の対応を人が目で追える。
+
+### IV. 仕様が正（Spec as Source of Truth）
+
+- 実装と spec.md が食い違ったら、どちらを直すかを MUST 明示的に決め、先に文書側
+  （spec.md / plan.md / tasks.md）を更新してからコードを直す。
+- spec.md には「何を・なぜ」だけを書き、技術の選択（「どう作るか」）は plan.md に MUST 分ける。
+- 各タスクは、対応する要求（FR-xxx）またはユーザーストーリーを MUST 参照する。
+
+**理由**: 本ラボの目的は SDD の流れを体験することであり、文書とコードの対応が崩れると
+学習の価値がなくなる。
+
+## 追加の制約
+
+- 対象はブラウザだけで動く個人用アプリとし、データは利用者の端末内にとどめる。
+- 本ラボは Public リポジトリの一部である。勤務先の名前・システム名・社内 ID・人名・コード・
+  URL を仕様・計画・コード・コメントに MUST NOT 書かない。
+- 外部の記事・ツールの情報を文書に書く場合は、出典リンクと確認日を付ける。
+- 日付は絶対日付（YYYY-MM-DD）で書く。
+
+## 開発の流れと品質ゲート
+
+- 段の順番: constitution → specify →（clarify）→ plan → tasks → analyze → implement → converge。
+  段を飛ばさない。
+- 各段の出力は、次の段に進む前に人が読み、必要なら直す（ここが学習の本体）。
+- plan.md の Constitution Check で本書の原則 I〜IV への適合を確認し、違反がある場合は
+  理由を Complexity Tracking に書く。理由のない違反は次の段に進めない。
+- 実装の完了条件: すべてのテストが通る、`/speckit-converge` が `Converged` を返す、
+  spec.md の受け入れ条件がすべてテストで覆われている。
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- 本書は、このラボ内の他の慣習・テンプレートの既定より優先する。
+- 改定手順: 変更理由を書いたうえで `/speckit-constitution` で本書を更新し、
+  Sync Impact Report を確認してからコミットする（コミット前に Sync Impact Report は削除する）。
+- バージョン規則（セマンティック バージョニング）:
+  - MAJOR: 原則の削除・意味を変える再定義
+  - MINOR: 原則・節の追加、指針の大幅な拡充
+  - PATCH: 言い回し・誤字・意味を変えない明確化
+- 適合確認: `/speckit-plan` の Constitution Check と `/speckit-analyze` で本書への適合を
+  毎回確認する。
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 1.0.0 | **Ratified**: 2026-11-22 | **Last Amended**: 2026-11-22

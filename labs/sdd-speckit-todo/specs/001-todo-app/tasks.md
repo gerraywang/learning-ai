@@ -32,10 +32,10 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 **Purpose**: プロジェクトの初期化
 
-- [ ] T001 Node.js 24.15 以上が入っていることを確認し（`node -v`。なければ quickstart.md の前提に従って入れる）、`package.json` を作る: `"type": "module"`、`"private": true`、scripts `dev`=`vite` / `build`=`vite build` / `test`=`vitest run`、`dependencies` は空、`devDependencies` は `vite ^8.3.8`・`vitest ^5.1.1`・`jsdom ^31.0.1`（research.md R6）。`npm install` を実行して `package-lock.json` を作る（plan.md Technical Context）
-- [ ] T002 [P] `vite.config.js` を作る: Vitest の既定環境は `node`、`tests/ui/**` だけ `jsdom` 環境にする（research.md R5。設定の書き方は Vitest 5 のドキュメントで確認）
-- [ ] T003 [P] `index.html` を作る: contracts/ui.md の「画面の要素」の表にある要素（追加フォーム・「やること」入力欄・「期限（任意）」入力欄・「追加」ボタン・絞り込みボタン 3 つ・「やることの一覧」の `<ul>`・空の表示・`role="status"` のお知らせ領域）を置き、`src/style.css` と `src/main.js` を読み込む（FR-001, FR-008, FR-011, FR-015 の要素）
-- [ ] T004 [P] `src/style.css` を空で作り、`.gitignore` に `node_modules/` と `dist/` を書く（plan.md Project Structure）
+- [X] T001 Node.js 24.15 以上が入っていることを確認し（`node -v`。なければ quickstart.md の前提に従って入れる）、`package.json` を作る: `"type": "module"`、`"private": true`、scripts `dev`=`vite` / `build`=`vite build` / `test`=`vitest run`、`dependencies` は空、`devDependencies` は `vite ^8.3.8`・`vitest ^5.1.1`・`jsdom ^31.0.1`（research.md R6）。`npm install` を実行して `package-lock.json` を作る（plan.md Technical Context）
+- [X] T002 [P] `vite.config.js` を作る: Vitest の既定環境は `node`、`tests/ui/**` だけ `jsdom` 環境にする（research.md R5。設定の書き方は Vitest 5 のドキュメントで確認）
+- [X] T003 [P] `index.html` を作る: contracts/ui.md の「画面の要素」の表にある要素（追加フォーム・「やること」入力欄・「期限（任意）」入力欄・「追加」ボタン・絞り込みボタン 3 つ・「やることの一覧」の `<ul>`・空の表示・`role="status"` のお知らせ領域）を置き、`src/style.css` と `src/main.js` を読み込む（FR-001, FR-008, FR-011, FR-015 の要素）
+- [X] T004 [P] `src/style.css` を空で作り、`.gitignore` に `node_modules/` と `dist/` を書く（plan.md Project Structure）
 
 ---
 
@@ -45,12 +45,12 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 **⚠️ CRITICAL**: このフェーズが終わるまでストーリーの作業は始めない
 
-- [ ] T005 [P] テスト用の偽 Storage を `tests/helpers/memory-storage.js` に作る: `getItem`/`setItem`/`removeItem` を持つメモリ上の Storage、`setItem` で例外を投げる版、アクセスで例外を投げる版の 3 種類（FR-012, FR-014 のテスト用）
-- [ ] T006 [P] 画面テスト用のヘルパーを `tests/helpers/render-app.js` に作る: `index.html` の `<body>` 部分を jsdom の `document` に入れ、偽 Storage と固定した「今日」（`YYYY-MM-DD`）を渡して app を起動し、ラベルや文言で要素を探す関数（contracts/ui.md のラベル）を返す。n 番目の行、または `data-id` で指定した行の中から部品を探す関数も返す（contracts/ui.md「一覧の 1 行」）（SC-006: 受け入れシナリオを画面テストにするため）
-- [ ] T007 `tests/unit/storage.test.js` に `load`/`save` のテストを書き、**失敗を確認する**: contracts/storage.md の「読み込み」の表の 4 行すべて（キーなし／正しい形式／壊れた形式／アクセスで例外）と「保存」（成功・`setItem` の例外で失敗を返し例外を外に出さない）。壊れた形式には、data-model.md の `Todo.id`・`Todo.title`・`Todo.done`・`Todo.due` の制約を満たさない要素を含むケースを入れる（FR-012, FR-014）
-- [ ] T008 `src/storage.js` に `load(storage)` と `save(storage, todos)` を実装し T007 を通す: キー・形式・戻り値は contracts/storage.md。要素の検証は data-model.md の `Todo.id`・`Todo.title`・`Todo.done`・`Todo.due` を引用して行う。壊れた値は消さない（FR-012, FR-013, FR-014）
-- [ ] T009 `src/app.js` に `createApp({ document, storage, today })` の骨組みを作る: 起動時に `load` を呼び、画面の状態（data-model.md の「画面の状態」: `todos`・`filter`・`message`）を持ち、`render()` で一覧・空の表示「やることはありません」・お知らせを丸ごと描き直す。読み込み失敗時は contracts/ui.md の「お知らせの文言」を出す。状態の初期値 `filter` は data-model.md の `Filter`（`all`）（FR-014, FR-015）
-- [ ] T010 `src/main.js` を作る: `window.localStorage` と端末のローカル日付の `YYYY-MM-DD`（research.md R3）を `createApp` に渡す。`localStorage` へのアクセスが例外を投げても起動できるようにする（FR-012, FR-014）
+- [X] T005 [P] テスト用の偽 Storage を `tests/helpers/memory-storage.js` に作る: `getItem`/`setItem`/`removeItem` を持つメモリ上の Storage、`setItem` で例外を投げる版、アクセスで例外を投げる版の 3 種類（FR-012, FR-014 のテスト用）
+- [X] T006 [P] 画面テスト用のヘルパーを `tests/helpers/render-app.js` に作る: `index.html` の `<body>` 部分を jsdom の `document` に入れ、偽 Storage と固定した「今日」（`YYYY-MM-DD`）を渡して app を起動し、ラベルや文言で要素を探す関数（contracts/ui.md のラベル）を返す。n 番目の行、または `data-id` で指定した行の中から部品を探す関数も返す（contracts/ui.md「一覧の 1 行」）（SC-006: 受け入れシナリオを画面テストにするため）
+- [X] T007 `tests/unit/storage.test.js` に `load`/`save` のテストを書き、**失敗を確認する**: contracts/storage.md の「読み込み」の表の 4 行すべて（キーなし／正しい形式／壊れた形式／アクセスで例外）と「保存」（成功・`setItem` の例外で失敗を返し例外を外に出さない）。壊れた形式には、data-model.md の `Todo.id`・`Todo.title`・`Todo.done`・`Todo.due` の制約を満たさない要素を含むケースを入れる（FR-012, FR-014）
+- [X] T008 `src/storage.js` に `load(storage)` と `save(storage, todos)` を実装し T007 を通す: キー・形式・戻り値は contracts/storage.md。要素の検証は data-model.md の `Todo.id`・`Todo.title`・`Todo.done`・`Todo.due` を引用して行う。壊れた値は消さない（FR-012, FR-013, FR-014）
+- [X] T009 `src/app.js` に `createApp({ document, storage, today })` の骨組みを作る: 起動時に `load` を呼び、画面の状態（data-model.md の「画面の状態」: `todos`・`filter`・`message`）を持ち、`render()` で一覧・空の表示「やることはありません」・お知らせを丸ごと描き直す。読み込み失敗時は contracts/ui.md の「お知らせの文言」を出す。状態の初期値 `filter` は data-model.md の `Filter`（`all`）（FR-014, FR-015）
+- [X] T010 `src/main.js` を作る: `window.localStorage` と端末のローカル日付の `YYYY-MM-DD`（research.md R3）を `createApp` に渡す。`localStorage` へのアクセスが例外を投げても起動できるようにする（FR-012, FR-014）
 
 **Checkpoint**: `npm test` で storage のテストが通り、`npm run dev` で空の画面が出る
 
@@ -66,13 +66,13 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 > **NOTE: テストを先に書き、失敗することを確認してから実装する**
 
-- [ ] T011 [P] [US1] `tests/unit/todo.test.js` に文言の検証と追加のテストを書く: `validateTitle`（前後の空白を除く／空と空白だけは不可／200 文字は可・201 文字は不可）、`addTodo`（末尾に追加・`done` は `false`・`id` は毎回異なる・同じ文言を 2 件追加できる）
-- [ ] T012 [P] [US1] `tests/ui/app.test.js` に US1-1〜US1-4 のテストを書く。あわせて、201 文字で入力が残りお知らせが出ること（FR-002）、0 件で「やることはありません」が出ること（FR-015）、`setItem` が失敗する偽 Storage で「保存できませんでした」が出て画面には追加されること（FR-014）、再読み込みは同じ偽 Storage で app を起動し直して再現する。アクセスで例外を投げる偽 Storage で起動すると、お知らせ「この端末に保存できません。閉じると内容は消えます」が出て、そのまま追加でき、追加後もそのお知らせが残ること（spec.md Edge Cases、FR-014、contracts/ui.md「お知らせの文言」）
+- [X] T011 [P] [US1] `tests/unit/todo.test.js` に文言の検証と追加のテストを書く: `validateTitle`（前後の空白を除く／空と空白だけは不可／200 文字は可・201 文字は不可）、`addTodo`（末尾に追加・`done` は `false`・`id` は毎回異なる・同じ文言を 2 件追加できる）
+- [X] T012 [P] [US1] `tests/ui/app.test.js` に US1-1〜US1-4 のテストを書く。あわせて、201 文字で入力が残りお知らせが出ること（FR-002）、0 件で「やることはありません」が出ること（FR-015）、`setItem` が失敗する偽 Storage で「保存できませんでした」が出て画面には追加されること（FR-014）、再読み込みは同じ偽 Storage で app を起動し直して再現する。アクセスで例外を投げる偽 Storage で起動すると、お知らせ「この端末に保存できません。閉じると内容は消えます」が出て、そのまま追加でき、追加後もそのお知らせが残ること（spec.md Edge Cases、FR-014、contracts/ui.md「お知らせの文言」）
 
 ### Implementation for User Story 1
 
-- [ ] T013 [US1] `src/todo.js` に `validateTitle(input)` と `addTodo(todos, { title })` を実装し T011 を通す: data-model.md の `Todo.title`（検証ルールの表）、`Todo.id`（`crypto.randomUUID()`）、`Todo.done`（初期値 `false`）を引用。配列は書き換えず新しい配列を返す
-- [ ] T014 [US1] `src/app.js` に追加フォームの処理を実装し T012 を通す: 送信で検証 → 追加 → `save` → `render`。成功時は入力欄を空に戻しお知らせを消す。失敗時は contracts/ui.md の「操作と結果」「お知らせの文言」どおりにする。一覧の 1 行は文言だけを表示する（完了チェック・削除・期限は後のストーリーで足す）。各行に `data-id` を付ける（contracts/ui.md「一覧の 1 行」）。起動時に保存先が使えないと分かっている場合は、操作のたびの「保存できませんでした」を出さず最初のお知らせを残す（contracts/ui.md「お知らせの文言」）
+- [X] T013 [US1] `src/todo.js` に `validateTitle(input)` と `addTodo(todos, { title })` を実装し T011 を通す: data-model.md の `Todo.title`（検証ルールの表）、`Todo.id`（`crypto.randomUUID()`）、`Todo.done`（初期値 `false`）を引用。配列は書き換えず新しい配列を返す
+- [X] T014 [US1] `src/app.js` に追加フォームの処理を実装し T012 を通す: 送信で検証 → 追加 → `save` → `render`。成功時は入力欄を空に戻しお知らせを消す。失敗時は contracts/ui.md の「操作と結果」「お知らせの文言」どおりにする。一覧の 1 行は文言だけを表示する（完了チェック・削除・期限は後のストーリーで足す）。各行に `data-id` を付ける（contracts/ui.md「一覧の 1 行」）。起動時に保存先が使えないと分かっている場合は、操作のたびの「保存できませんでした」を出さず最初のお知らせを残す（contracts/ui.md「お知らせの文言」）
 
 **Checkpoint**: US1 だけで使える状態（MVP）。`npm test` がすべて通る
 

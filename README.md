@@ -5,7 +5,7 @@ AI を使った開発を体系的に学ぶ。最初の柱は **SDD（Spec-Driven
 ## ロードマップ
 | # | テーマ | ねらい | 課題（labs） | 状態 |
 |---|---|---|---|---|
-| 01 | [SDD 仕様駆動開発](01-sdd/README.md) | 仕様 → 計画 → タスク → 実装の流れで AI に作らせる | 小さなアプリを Spec Kit で 1 本 | ⬜ |
+| 01 | [SDD 仕様駆動開発](01-sdd/README.md) | 仕様 → 計画 → タスク → 実装の流れで AI に作らせる | 小さなアプリを Spec Kit で 1 本 | 🟡 |
 | 02 | [コンテキストエンジニアリング](02-context-engineering/README.md) | プロンプトでなく「AI に渡す情報の設計」を学ぶ | CLAUDE.md の良し悪しを比べる | ⬜ |
 | 03 | [エージェントとツール（MCP）](03-agents-and-tools/README.md) | ツール呼び出し・MCP・マルチエージェントの仕組み | 自作 MCP サーバーを 1 つ | ⬜ |
 | 04 | [Claude Code のハーネス](04-claude-code-harness/README.md) | Skills・Subagents・Hooks・ルーチンを設計として理解する | 自分の Claude Code 設定を図にする | ⬜ |

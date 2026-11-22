@@ -15,12 +15,12 @@
 ## 教材（2026-11-22 時点。版が変わりやすいので使う前に要確認）
 | 教材 | 何が分かるか |
 |---|---|
-| GitHub Spec Kit（github.com/github/spec-kit） | constitution → specify → plan → tasks → implement のコマンドで回す実物 |
+| GitHub Spec Kit（github.com/github/spec-kit、1.4.3 を 2026-11-22 に確認） | `/speckit-constitution` → `specify` → `plan` → `tasks` → `implement` → `converge`（収束判定）。Claude Code では `.claude/skills/` にスキルとして入る |
 | Kiro（kiro.dev）の Specs | requirements.md（EARS）・design.md・tasks.md の 3 点セット |
 | Anthropic のエンジニアリングブログ（Claude Code のベストプラクティス、コンテキストエンジニアリング） | 計画を先に書かせる・CLAUDE.md の書き方 |
 
 ## 課題
-- [ ] lab1: Spec Kit で小さな TODO アプリを最後まで作る（`labs/sdd-speckit-todo/`）
+- [ ] lab1: Spec Kit で小さな TODO アプリを最後まで作る（[labs/sdd-speckit-todo](../labs/sdd-speckit-todo/README.md)、準備済み 2026-11-22）
 - [ ] lab2: 同じアプリを Kiro 風の 3 点セット（requirements / design / tasks）を手で書いて Claude Code に作らせ、違いを比べる
 - [ ] lab3: 仕様を 1 か所変えて再生成し、どこまで追従するかを見る
 - [ ] まとめ: 実務の業務システム改修に持ち込むなら何を仕様にするかを一般論で書く

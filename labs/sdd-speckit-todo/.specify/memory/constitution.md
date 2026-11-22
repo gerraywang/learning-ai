@@ -35,7 +35,9 @@
 - 実装と spec.md が食い違ったら、どちらを直すかを MUST 明示的に決め、先に文書側
   （spec.md / plan.md / tasks.md）を更新してからコードを直す。
 - spec.md には「何を・なぜ」だけを書き、技術の選択（「どう作るか」）は plan.md に MUST 分ける。
-- 各タスクは、対応する要求（FR-xxx）またはユーザーストーリーを MUST 参照する。
+- 各タスクは、対応する要求（FR-xxx / SC-xxx）またはユーザーストーリーを MUST 参照する。
+  ただし Setup フェーズ（環境づくり）のタスクは、根拠となる plan.md の節
+  （Technical Context / Project Structure / research.md の決定）の参照で足りる。
 
 **理由**: 本ラボの目的は SDD の流れを体験することであり、文書とコードの対応が崩れると
 学習の価値がなくなる。
@@ -70,4 +72,4 @@
 - 適合確認: `/speckit-plan` の Constitution Check と `/speckit-analyze` で本書への適合を
   毎回確認する。
 
-**Version**: 1.0.0 | **Ratified**: 2026-11-22 | **Last Amended**: 2026-11-22
+**Version**: 1.1.0 | **Ratified**: 2026-11-22 | **Last Amended**: 2026-11-22

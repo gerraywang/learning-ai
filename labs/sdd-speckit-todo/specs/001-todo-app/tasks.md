@@ -86,13 +86,13 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T015 [P] [US2] `tests/unit/todo.test.js` に `toggleTodo` のテストを書く: 指定した `id` だけ `done` が反転する、存在しない `id` では変わらない
-- [ ] T016 [P] [US2] `tests/ui/app.test.js` に US2-1〜US2-3 のテストを書く: 完了の行に `done` クラスが付く（FR-006）。初期データは偽 Storage に直接入れて用意する
+- [X] T015 [P] [US2] `tests/unit/todo.test.js` に `toggleTodo` のテストを書く: 指定した `id` だけ `done` が反転する、存在しない `id` では変わらない
+- [X] T016 [P] [US2] `tests/ui/app.test.js` に US2-1〜US2-3 のテストを書く: 完了の行に `done` クラスが付く（FR-006）。初期データは偽 Storage に直接入れて用意する
 
 ### Implementation for User Story 2
 
-- [ ] T017 [US2] `src/todo.js` に `toggleTodo(todos, id)` を実装し T015 を通す（data-model.md の `Todo.done` と「状態の変化」）
-- [ ] T018 [US2] `src/app.js` の 1 行に完了チェック（ラベルは文言）を足し、変更で `toggleTodo` → `save` → `render`。完了の行に `done` クラスを付ける。T016 を通す
+- [X] T017 [US2] `src/todo.js` に `toggleTodo(todos, id)` を実装し T015 を通す（data-model.md の `Todo.done` と「状態の変化」）
+- [X] T018 [US2] `src/app.js` の 1 行に完了チェック（ラベルは文言）を足し、変更で `toggleTodo` → `save` → `render`。完了の行に `done` クラスを付ける。T016 を通す
 
 **Checkpoint**: US1 と US2 がどちらも動く
 
@@ -106,13 +106,13 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T019 [P] [US3] `tests/unit/todo.test.js` に `removeTodo` のテストを書く: 指定した `id` だけ消え、残りの順番は変わらない
-- [ ] T020 [P] [US3] `tests/ui/app.test.js` に US3-1〜US3-3 のテストを書く: 削除ボタンは読み上げ名「<文言> を削除」で探す。US3-3 の完了済みのやることは偽 Storage に直接入れて用意する（US2 に依存しない）。同じ文言のやることを 2 件用意し、2 件目だけを削除すると 1 件目が残ること（spec.md Edge Cases。行は `data-id` で特定する）
+- [X] T019 [P] [US3] `tests/unit/todo.test.js` に `removeTodo` のテストを書く: 指定した `id` だけ消え、残りの順番は変わらない
+- [X] T020 [P] [US3] `tests/ui/app.test.js` に US3-1〜US3-3 のテストを書く: 削除ボタンは読み上げ名「<文言> を削除」で探す。US3-3 の完了済みのやることは偽 Storage に直接入れて用意する（US2 に依存しない）。同じ文言のやることを 2 件用意し、2 件目だけを削除すると 1 件目が残ること（spec.md Edge Cases。行は `data-id` で特定する）
 
 ### Implementation for User Story 3
 
-- [ ] T021 [US3] `src/todo.js` に `removeTodo(todos, id)` を実装し T019 を通す（data-model.md の `Todo.id`）
-- [ ] T022 [US3] `src/app.js` の 1 行に「削除」ボタン（`aria-label` は「<文言> を削除」）を足し、押すと確認なしで `removeTodo` → `save` → `render`。T020 を通す
+- [X] T021 [US3] `src/todo.js` に `removeTodo(todos, id)` を実装し T019 を通す（data-model.md の `Todo.id`）
+- [X] T022 [US3] `src/app.js` の 1 行に「削除」ボタン（`aria-label` は「<文言> を削除」）を足し、押すと確認なしで `removeTodo` → `save` → `render`。T020 を通す
 
 **Checkpoint**: US1〜US3 が動く
 
@@ -126,13 +126,13 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 ### Tests for User Story 4 ⚠️
 
-- [ ] T023 [P] [US4] `tests/unit/todo.test.js` にテストを書く: `addTodo` に期限を渡すと保存され、空文字なら `null` になる。`isOverdue(todo, today)` は「昨日が期限・未完了」だけ `true`、「今日が期限」「明日が期限」「期限なし」「昨日が期限・完了」は `false`。`toDateString(date)` が端末のローカル日付で `YYYY-MM-DD` を返す
-- [ ] T024 [P] [US4] `tests/ui/app.test.js` に US4-1〜US4-5 のテストを書く: 「今日」は T006 のヘルパーで固定する。期限切れの行に `overdue` クラスと「期限切れ」の文字がある（FR-010）、期限は「期限: YYYY-MM-DD」で表示される（FR-009）
+- [X] T023 [P] [US4] `tests/unit/todo.test.js` にテストを書く: `addTodo` に期限を渡すと保存され、空文字なら `null` になる。`isOverdue(todo, today)` は「昨日が期限・未完了」だけ `true`、「今日が期限」「明日が期限」「期限なし」「昨日が期限・完了」は `false`。`toDateString(date)` が端末のローカル日付で `YYYY-MM-DD` を返す
+- [X] T024 [P] [US4] `tests/ui/app.test.js` に US4-1〜US4-5 のテストを書く: 「今日」は T006 のヘルパーで固定する。期限切れの行に `overdue` クラスと「期限切れ」の文字がある（FR-010）、期限は「期限: YYYY-MM-DD」で表示される（FR-009）
 
 ### Implementation for User Story 4
 
-- [ ] T025 [US4] `src/todo.js` の `addTodo` が `due` を受け取るようにし、`isOverdue(todo, today)` と `toDateString(date)` を実装して T023 を通す: data-model.md の `Todo.due` と「導出される値」を引用。比べるのは `YYYY-MM-DD` の文字列どうし（research.md R3）
-- [ ] T026 [US4] `src/app.js` で「期限（任意）」入力欄の値を `addTodo` に渡し、追加後に空に戻す。1 行に期限と期限切れの印を表示する（contracts/ui.md の「一覧の 1 行」）。`src/main.js` の日付作成を `toDateString` に置き換える。T024 を通す
+- [X] T025 [US4] `src/todo.js` の `addTodo` が `due` を受け取るようにし、`isOverdue(todo, today)` と `toDateString(date)` を実装して T023 を通す: data-model.md の `Todo.due` と「導出される値」を引用。比べるのは `YYYY-MM-DD` の文字列どうし（research.md R3）
+- [X] T026 [US4] `src/app.js` で「期限（任意）」入力欄の値を `addTodo` に渡し、追加後に空に戻す。1 行に期限と期限切れの印を表示する（contracts/ui.md の「一覧の 1 行」）。`src/main.js` の日付作成を `toDateString` に置き換える。T024 を通す
 
 **Checkpoint**: US1〜US4 が動く
 
@@ -146,13 +146,13 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 ### Tests for User Story 5 ⚠️
 
-- [ ] T027 [P] [US5] `tests/unit/todo.test.js` に `filterTodos(todos, filter)` のテストを書く: data-model.md の `Filter` の 3 つの値それぞれで正しいやることだけを順番どおりに返す
-- [ ] T028 [P] [US5] `tests/ui/app.test.js` に US5-1〜US5-6 のテストを書く: 選択中のボタンは `aria-pressed="true"`、0 件のときは「該当するやることはありません」（FR-015）。初期データは偽 Storage に直接入れて用意する
+- [X] T027 [P] [US5] `tests/unit/todo.test.js` に `filterTodos(todos, filter)` のテストを書く: data-model.md の `Filter` の 3 つの値それぞれで正しいやることだけを順番どおりに返す
+- [X] T028 [P] [US5] `tests/ui/app.test.js` に US5-1〜US5-6 のテストを書く: 選択中のボタンは `aria-pressed="true"`、0 件のときは「該当するやることはありません」（FR-015）。初期データは偽 Storage に直接入れて用意する
 
 ### Implementation for User Story 5
 
-- [ ] T029 [US5] `src/todo.js` に `filterTodos(todos, filter)` を実装し T027 を通す（data-model.md の `Filter`）
-- [ ] T030 [US5] `src/app.js` で絞り込みボタンの押下で `filter` を変えて `render` する（保存しない）。`render` は `filterTodos` の結果を表示し、0 件なら全体が 0 件か絞り込みで 0 件かによって空の表示の文言を切り替える。T028 を通す
+- [X] T029 [US5] `src/todo.js` に `filterTodos(todos, filter)` を実装し T027 を通す（data-model.md の `Filter`）
+- [X] T030 [US5] `src/app.js` で絞り込みボタンの押下で `filter` を変えて `render` する（保存しない）。`render` は `filterTodos` の結果を表示し、0 件なら全体が 0 件か絞り込みで 0 件かによって空の表示の文言を切り替える。T028 を通す
 
 **Checkpoint**: すべてのストーリーが動く
 
@@ -162,11 +162,11 @@ description: "ブラウザで使う TODO アプリの実装タスク"
 
 **Purpose**: 複数のストーリーにまたがる仕上げ
 
-- [ ] T031 [P] `src/style.css` に見た目を足す: `done` の行は取り消し線、`overdue` の行は色と「期限切れ」の文字の両方で目立たせる（research.md R7）。絞り込みの選択中ボタンを区別する（FR-006, FR-010, FR-011）
-- [ ] T032 [P] `tests/ui/performance.test.js` を書く: 500 件を偽 Storage に入れて起動し、追加・切り替え・削除・絞り込みのそれぞれで画面反映までが 0.1 秒以内（SC-002）
-- [ ] T033 [P] `tests/unit/no-network.test.js` を書く: `src/` のファイルに `fetch`・`XMLHttpRequest`・`WebSocket`・`navigator.sendBeacon` が含まれないこと（FR-013 / SC-005）
-- [ ] T034 `npm test` がすべて通り、テスト名に US1-1〜US5-6 の 21 個がそろっていることを確認する（SC-006）。`npm run build` が成功することを確認する
-- [ ] T035 quickstart.md の「手で確かめる流れ」9 手順と「保存の失敗を確かめる」をブラウザで実行し、結果を確認する（SC-001, SC-003, SC-004, SC-005）
+- [X] T031 [P] `src/style.css` に見た目を足す: `done` の行は取り消し線、`overdue` の行は色と「期限切れ」の文字の両方で目立たせる（research.md R7）。絞り込みの選択中ボタンを区別する（FR-006, FR-010, FR-011）
+- [X] T032 [P] `tests/ui/performance.test.js` を書く: 500 件を偽 Storage に入れて起動し、追加・切り替え・削除・絞り込みのそれぞれで画面反映までが 0.1 秒以内（SC-002）
+- [X] T033 [P] `tests/unit/no-network.test.js` を書く: `src/` のファイルに `fetch`・`XMLHttpRequest`・`WebSocket`・`navigator.sendBeacon` が含まれないこと（FR-013 / SC-005）
+- [X] T034 `npm test` がすべて通り、テスト名に US1-1〜US5-6 の 21 個がそろっていることを確認する（SC-006）。`npm run build` が成功することを確認する
+- [X] T035 quickstart.md の「手で確かめる流れ」9 手順と「保存の失敗を確かめる」をブラウザで実行し、結果を確認する（SC-001, SC-003, SC-004, SC-005）
 
 ---
 

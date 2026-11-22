@@ -50,6 +50,14 @@ export function renderApp({ storage = createMemoryStorage(), today = DEFAULT_TOD
       ui.dueInput().value = due;
       ui.addButton().click();
     },
+    /** 行の中の部品（行は番号か data-id で指定。同じ文言が複数あっても区別できる） */
+    checkbox: (indexOrId) => ui.row(indexOrId).querySelector('input[type="checkbox"]'),
+    deleteButton: (indexOrId) => ui.row(indexOrId).querySelector('button'),
+    toggle: (indexOrId) => ui.checkbox(indexOrId).click(),
+    remove: (indexOrId) => ui.deleteButton(indexOrId).click(),
+    filterButton: (text) => byText('#filters button', text),
+    /** Storage に保存されているやること（contracts/storage.md の形式） */
+    getStoredTodos: () => JSON.parse(storage.getItem('sdd-speckit-todo')).todos,
     /** 同じ Storage で app を起動し直す＝ページの再読み込み */
     reload: () => start(),
   };

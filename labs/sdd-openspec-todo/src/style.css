@@ -169,6 +169,15 @@ button {
   min-width: 0;
 }
 
+/* 期限の日付欄は伸ばさず、狭い画面では次の行に回す */
+.edit-form {
+  flex-wrap: wrap;
+}
+
+.edit-form input[type='date'] {
+  flex: 0 0 auto;
+}
+
 #empty-message {
   color: var(--muted);
 }

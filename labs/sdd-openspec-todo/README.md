@@ -15,6 +15,11 @@
 - 最新は v2.1.1（2026-11-19）。v2.0.0（2026-11-11）でコマンド名が変わったばかり。**手順は使う前に要確認**
 - インストール: `npm install -g @fission-ai/openspec@latest`（Node.js 22.20 以上）または `brew install openspec`
 - `openspec init` の既定はスキルを**マシン全体**に入れる。この lab では `--scope project` でリポジトリの中に置く
+- **正本の `specs/` は、変更を archive したときにだけ埋まる。** explore は考えるためのモードで、正本には書かない
+  （書けるのは変更の文書だけで、書く前に yes / no の確認を取る）。そのため「既存の整理」も 1 つの変更として作り、archive する
+  （`.agents/skills/openspec-explore/SKILL.md` で確認、2026-11-22）
+- 正本は**機能のまとまり（capability）ごと**に `openspec/specs/<capability>/spec.md`。変更の差分も、触れる capability ごとに置く
+- `openspec/config.yaml` の `context` に「成果物は日本語で書く」と「コメントの FR 番号は以前の仕様の名残」を書いた
 
 ## 題材と条件
 - lab1 の TODO アプリ（001 と 002 の実装後、テスト 144 件）の **コードとテストだけ** をコピーした（2026-11-22）。
@@ -35,7 +40,9 @@ claude
 
 | 段 | やること | 誰が | できた |
 |---|---|---|---|
-| 1 既存の整理 | `/openspec-explore` で今のコードを読ませ、`openspec/specs/` に今の振る舞いを起こす（コードは変えない） | Claude | ⬜ |
+| 1-a 既存の調査 | `/openspec-explore` で今のコードを調べさせ、機能のまとまり（capability）の分け方の案を出させる。分け方は自分で決める | Claude＋自分 | ⬜ |
+| 1-b 既存の記録 | 「`baseline-current-behavior` という変更として記録して」と頼み、今の振る舞いを ADDED Requirements として書かせる（コードは変えない。tasks は既存のテストが通ることの確認だけ） | Claude | ⬜ |
+| 1-c 正本にする | 中身を確かめてから `/openspec-archive-change` → 正本の `openspec/specs/<capability>/spec.md` が埋まる | 自分＋Claude | ⬜ |
 | 2 確認 | 起こした `specs/` を読み、実際の画面の振る舞いと合っているかを確かめる | 自分 | ⬜ |
 | 3 変更の提案 | `/openspec-propose add-due-edit` で「期限の編集」を提案させる（下の依頼文） | Claude | ⬜ |
 | 4 レビュー | proposal・差分・tasks を読み、直す（「やらないこと: 期限の編集」が REMOVED か MODIFIED になっているか） | 自分 | ⬜ |

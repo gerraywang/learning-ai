@@ -2,6 +2,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   addTodo,
+  editDue,
   editTodo,
   filterTodos,
   isOverdue,
@@ -127,6 +128,42 @@ describe('editTodo（spec 002 FR-003, FR-007、data-model.md Todo.title）', () 
 
   it('存在しない id では変わらない', () => {
     expect(editTodo(todos, 'zzz', 'X')).toEqual(todos);
+  });
+});
+
+describe('editDue（openspec change add-due-edit）', () => {
+  const todos = [
+    { id: 'a', title: '牛乳を買う', done: false, due: '2026-12-01' },
+    { id: 'b', title: '本を返す', done: true, due: null },
+    { id: 'c', title: '歯医者', done: false, due: null },
+  ];
+
+  it('指定した id の due だけが変わり、title・done・id・順番は変わらない', () => {
+    expect(editDue(todos, 'a', '2026-12-24')).toEqual([
+      { id: 'a', title: '牛乳を買う', done: false, due: '2026-12-24' },
+      todos[1],
+      todos[2],
+    ]);
+  });
+
+  it('空文字や null を渡すと期限なしになる', () => {
+    expect(editDue(todos, 'a', '')[0].due).toBeNull();
+    expect(editDue(todos, 'a', null)[0].due).toBeNull();
+  });
+
+  it('期限なしのやることに期限を付けられる（完了のままで）', () => {
+    expect(editDue(todos, 'b', '2026-12-01')[1]).toEqual({ id: 'b', title: '本を返す', done: true, due: '2026-12-01' });
+  });
+
+  it('ほかのやることは同じオブジェクトのまま、元の配列も変えない', () => {
+    const after = editDue(todos, 'a', '2026-12-24');
+    expect(after[1]).toBe(todos[1]);
+    expect(after[2]).toBe(todos[2]);
+    expect(todos[0].due).toBe('2026-12-01');
+  });
+
+  it('存在しない id では変わらない', () => {
+    expect(editDue(todos, 'zzz', '2026-12-24')).toEqual(todos);
   });
 });
 

@@ -31,6 +31,17 @@ describe('500 件での操作の速さ（SC-002）', () => {
     // spec 002 SC-002: 編集の確定・取り消し（編集の開始は計測の前に済ませる）
     ['編集の確定', (ui) => ui.confirmEdit('直したやること'), (ui) => ui.startEdit('id-250')],
     ['編集の取り消し', (ui) => ui.cancelEditButton().click(), (ui) => ui.startEdit('id-250')],
+    // add-due-edit: 期限も書き換えてからの確定・取り消し
+    [
+      '期限も変えた編集の確定',
+      (ui) => ui.confirmEdit('直したやること'),
+      (ui) => (ui.startEdit('id-250'), ui.setEditDue('2026-12-24')),
+    ],
+    [
+      '期限も変えた編集の取り消し',
+      (ui) => ui.cancelEditButton().click(),
+      (ui) => (ui.startEdit('id-250'), ui.setEditDue('2026-12-24')),
+    ],
   ])('%s が 0.1 秒以内', (_, action, prepare = () => {}) => {
     const ui = renderApp({ storage: seed500() });
     prepare(ui);

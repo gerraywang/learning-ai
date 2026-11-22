@@ -266,10 +266,10 @@ describe('User Story 2 - 編集をやめて元に戻す', () => {
     expect(document.activeElement).toBe(ui.editButton('milk'));
   });
 
-  it('編集中の行の中（入力欄・期限の表示）をクリックしても取り消さない（spec Edge Cases）', () => {
+  it('編集中の行の中（入力欄・日付欄）をクリックしても取り消さない（spec Edge Cases、add-due-edit で期限の表示を日付欄に書き直し）', () => {
     const ui = editingMilk([{ ...milk, due: '2026-12-01' }, book]);
     ui.editInput().click();
-    ui.row('milk').querySelector('.due').click();
+    ui.editDueInput().click();
 
     expect(ui.editInput()).not.toBeNull();
     expect(ui.editInput().value).toBe('豆乳を買う');

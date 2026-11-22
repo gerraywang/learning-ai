@@ -3,6 +3,7 @@
 import { load, save } from './storage.js';
 import {
   addTodo,
+  editDue,
   editTodo,
   filterTodos,
   isOverdue,
@@ -41,7 +42,7 @@ export function createApp({ document, storage, today }) {
     todos: loaded.todos,
     filter: 'all', // data-model.md Filter の初期値
     message: LOAD_MESSAGES[loaded.status],
-    editing: null, // spec 002 data-model.md「画面の状態」: null または { id, draft }。保存しない
+    editing: null, // null または { id, draft, dueDraft }（dueDraft は日付欄の値、YYYY-MM-DD か空文字）。保存しない
   };
 
   const els = {
@@ -62,7 +63,7 @@ export function createApp({ document, storage, today }) {
     if (state.editing?.id === todo.id) {
       li.classList.add('editing');
       li.append(renderEditForm());
-      appendDue(li, todo);
+      appendDue(li, todo, { showDate: false }); // 期限の文字は日付欄に置き換え、期限切れの印だけ出す
       return li;
     }
 
@@ -97,10 +98,12 @@ export function createApp({ document, storage, today }) {
     return li;
   }
 
-  /** 期限と期限切れの印（FR-009, FR-010）。編集中の行にも出す（spec 002 contracts/ui.md） */
-  function appendDue(li, todo) {
-    // 期限と期限切れの印（FR-009, FR-010）。色だけに頼らず文字でも示す
-    if (todo.due !== null) {
+  /**
+   * 期限と期限切れの印（FR-009, FR-010）。色だけに頼らず文字でも示す。
+   * 編集中の行では期限の文字を出さず（日付欄で示す）、期限切れの印は保存されている期限で出す
+   */
+  function appendDue(li, todo, { showDate = true } = {}) {
+    if (showDate && todo.due !== null) {
       const due = document.createElement('span');
       due.className = 'due';
       due.textContent = `期限: ${todo.due}`;
@@ -124,6 +127,11 @@ export function createApp({ document, storage, today }) {
     input.autocomplete = 'off';
     input.setAttribute('aria-label', 'やることの文言');
     input.value = state.editing.draft;
+    const due = document.createElement('input');
+    due.type = 'date';
+    due.className = 'edit-due';
+    due.setAttribute('aria-label', '期限');
+    due.value = state.editing.dueDraft;
     const confirm = document.createElement('button');
     confirm.type = 'submit';
     confirm.textContent = '確定';
@@ -131,7 +139,7 @@ export function createApp({ document, storage, today }) {
     cancel.type = 'button';
     cancel.className = 'cancel';
     cancel.textContent = '取り消し';
-    form.append(input, confirm, cancel);
+    form.append(input, due, confirm, cancel);
     return form;
   }
 
@@ -210,28 +218,30 @@ export function createApp({ document, storage, today }) {
     if (!button) return;
     const id = button.closest('li').dataset.id;
     const todo = state.todos.find((t) => t.id === id);
-    state.editing = { id, draft: todo.title };
+    state.editing = { id, draft: todo.title, dueDraft: todo.due ?? '' };
     state.message = baseMessage();
     render();
     focusRow(id, '.edit-form input');
   });
 
-  // 編集の確定（spec 002 FR-003 / FR-005 / FR-007 / FR-008 / FR-012）。Enter でもフォームの送信になる
+  // 編集の確定（文言と期限）。入力欄・日付欄での Enter でもフォームの送信になる
   els.list.addEventListener('submit', (event) => {
     if (!event.target.matches('form.edit-form')) return;
     event.preventDefault();
     const { id } = state.editing;
-    const input = event.target.querySelector('input');
+    const input = event.target.querySelector('input[aria-label="やることの文言"]');
+    const dueValue = event.target.querySelector('input.edit-due').value;
     const result = validateTitle(input.value);
     if (!result.ok) {
-      // 決まりに合わないときは変えず、編集中のまま入力を残して理由を示す（spec 002 FR-006）
-      state.editing = { id, draft: input.value };
+      // 決まりに合わないときは文言も期限も変えず、編集中のまま両方の入力を残して理由を示す（spec 002 FR-006）
+      state.editing = { id, draft: input.value, dueDraft: dueValue };
       state.message = result.error === 'empty' ? MESSAGES.empty : MESSAGES.tooLong;
       render();
       focusRow(id, '.edit-form input');
       return;
     }
-    updateTodos(editTodo(state.todos, id, result.title));
+    // 日付欄が空なら期限なし（追加のフォームと同じ扱い）
+    updateTodos(editDue(editTodo(state.todos, id, result.title), id, dueValue));
     focusRow(id, 'button.edit');
   });
 

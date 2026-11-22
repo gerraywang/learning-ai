@@ -64,6 +64,12 @@ export function renderApp({ storage = createMemoryStorage(), today = DEFAULT_TOD
     /** 編集中の行の「やることの文言」入力欄（なければ null） */
     editInput: () =>
       ui.list().querySelector('li.editing input[aria-label="やることの文言"]') ?? null,
+    /** 編集中の行の「期限」日付欄（なければ null） */
+    editDueInput: () => ui.list().querySelector('li.editing input[aria-label="期限"]') ?? null,
+    /** 日付欄の値を変える（空文字で期限を外す） */
+    setEditDue: (value) => {
+      ui.editDueInput().value = value;
+    },
     confirmEditButton: () => byText('li.editing button', '確定'),
     cancelEditButton: () => byText('li.editing button', '取り消し'),
     /** 入力欄に文言を入れて「確定」を押す */
@@ -76,9 +82,9 @@ export function renderApp({ storage = createMemoryStorage(), today = DEFAULT_TOD
       ui.editInput().value = text;
       ui.editForm().requestSubmit();
     },
-    /** 編集の入力欄で keydown を起こす */
-    pressKey: (key, { isComposing = false } = {}) => {
-      ui.editInput().dispatchEvent(
+    /** 編集の入力欄（target を渡せばその要素）で keydown を起こす */
+    pressKey: (key, { isComposing = false, target = ui.editInput() } = {}) => {
+      target.dispatchEvent(
         new KeyboardEvent('keydown', { key, isComposing, bubbles: true, cancelable: true }),
       );
     },

@@ -41,6 +41,14 @@ export function editTodo(todos, id, title) {
   return todos.map((todo) => (todo.id === id ? { ...todo, title } : todo));
 }
 
+/**
+ * 指定した id の期限だけを変えた配列を返す（openspec change add-due-edit）
+ * due は YYYY-MM-DD。空文字・null は期限なし。title・done・順番は変えない。
+ */
+export function editDue(todos, id, due) {
+  return todos.map((todo) => (todo.id === id ? { ...todo, due: due || null } : todo));
+}
+
 /** 指定した id のやることを除いた配列を返す（data-model.md Todo.id、FR-007） */
 export function removeTodo(todos, id) {
   return todos.filter((todo) => todo.id !== id);
